@@ -59,7 +59,8 @@ export async function POST(request: NextRequest) {
         role: user.role,
       },
     });
-  } catch {
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    return NextResponse.json({ error: "Internal server error", detail: message }, { status: 500 });
   }
 }
