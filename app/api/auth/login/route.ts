@@ -40,16 +40,20 @@ export async function POST(request: NextRequest) {
 
     await setAuthCookie(token);
 
-    await db.auditLog.create({
-      data: {
-        action: "LOGIN",
-        entity: "User",
-        entityId: user.id,
-        details: `User logged in`,
-        performedBy: user.email,
-        userId: user.id,
-      },
-    });
+    try {
+      await db.auditLog.create({
+        data: {
+          action: "LOGIN",
+          entity: "User",
+          entityId: user.id,
+          details: "User logged in",
+          performedBy: user.email,
+          userId: user.id,
+        },
+      });
+    } catch (auditError) {
+      console.error("Failed to write login audit log", auditError);
+    }
 
     return NextResponse.json({
       user: {
@@ -61,6 +65,13 @@ export async function POST(request: NextRequest) {
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    return NextResponse.json({ error: "Internal server error", detail: message }, { status: 500 });
+    console.error("Login failed", err);
+    return NextResponse.json(
+      {
+        error: "Internal server error",
+        ...(process.env.NODE_ENV !== "production" ? { detail: message } : {}),
+      },
+      { status: 500 }
+    );
   }
 }
