@@ -22,7 +22,7 @@ Local Storage: For client-side data persistence.
 Installation:-
 
 Clone the Repository:
-git clone https://github.com/[your-username]/user-management-system.git
+git clone https://github.com/ManjeetSAINII/user-management-system.git
 cd user-management-system
 Install Dependencies (if using Node.js):
 npm install
@@ -101,7 +101,7 @@ A production-grade full-stack user management system built with Next.js 16, Type
 
 ```bash
 # 1. Clone the repository
-git clone <your-repo-url>
+git clone https://github.com/ManjeetSAINII/User-Management-System
 cd usermanagement
 
 # 2. Install dependencies
@@ -119,7 +119,6 @@ Create a `.env` file in the project root:
 ```env
 DATABASE_URL="file:./dev.db"
 JWT_SECRET="your-super-secret-key-change-this-in-production"
-NEXTAUTH_URL="http://localhost:3000"
 ```
 
 ### Database Setup
@@ -269,6 +268,10 @@ npx prisma migrate dev --name <name>   # Create a new migration
 
 ## Deploying to Vercel
 
+Live login URL:
+
+[https://user-management-system-9aynd048h-sainis-projects-970a1e11.vercel.app/login](https://user-management-system-9aynd048h-sainis-projects-970a1e11.vercel.app/login)
+
 > **Important:** SQLite does not work on Vercel. Vercel runs serverless functions with no persistent filesystem — your `dev.db` file will not survive between requests.
 
 ### Step 1 — Migrate to Turso (free, 1-minute setup)
@@ -293,11 +296,14 @@ turso db tokens create usermanagement  # → your auth token
 In your Vercel project dashboard → Settings → Environment Variables, add:
 
 ```
-DATABASE_URL=libsql://your-db-name.turso.io
+DATABASE_URL=libsql://usermanagement-manjeetsainii.aws-ap-south-1.turso.io
 TURSO_AUTH_TOKEN=your-token-here
 JWT_SECRET=your-production-secret
-NEXTAUTH_URL=https://your-app.vercel.app
 ```
+
+`NEXTAUTH_URL` is not required because this project uses custom JWT auth with an httpOnly cookie, not NextAuth/Auth.js.
+
+After editing environment variables, redeploy the Vercel project so the serverless functions receive the new values.
 
 ### Step 3 — Update lib/db.ts for Turso
 
